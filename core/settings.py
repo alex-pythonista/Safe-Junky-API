@@ -38,8 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # apps
+    'users',
+
     # rest-framework
     'rest_framework',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -83,6 +87,13 @@ DATABASES = {
     }
 }
 
+AUTH_USER_MODEL = 'users.User'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',  # <-- And here
+    ],
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -124,3 +135,4 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+AZURE_COMMUNICATIONS_CONNECTION_STRING = "endpoint=https://test-django-email.communication.azure.com/;accesskey=mGI96OwdSOUmUOB4ODpHb0F8E+ZjecWTUJTXge3zMfjV5ghULUWbe2N52ScIA5s6NC3n04DIe8q1MG8uHK/APQ=="

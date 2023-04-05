@@ -1,13 +1,14 @@
+from django.contrib.auth import authenticate
 from rest_framework import generics, status
 from rest_framework.response import Response
-from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
-from utils.azure_email_service import send_email
-import random
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.authentication import TokenAuthentication, BasicAuthentication
-from . import serializers, models
+from rest_framework.authentication import TokenAuthentication
 
+from . import serializers, models
+from utils.azure_email_service import send_email
+
+import random
 
 # Create your views here.
 

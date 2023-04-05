@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -135,4 +138,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-AZURE_COMMUNICATIONS_CONNECTION_STRING = "endpoint=https://test-django-email.communication.azure.com/;accesskey=mGI96OwdSOUmUOB4ODpHb0F8E+ZjecWTUJTXge3zMfjV5ghULUWbe2N52ScIA5s6NC3n04DIe8q1MG8uHK/APQ=="
+
+# Azure Credentials
+AZURE_COMMUNICATIONS_CONNECTION_STRING = os.getenv('AZURE_STRING_FOR_EMAIL')

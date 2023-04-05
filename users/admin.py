@@ -1,10 +1,10 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
+from . import models
 # Register your models here.
 
 User = get_user_model()
-
 
 class UserAdminConfig(UserAdmin):
     model = User
@@ -55,3 +55,5 @@ admin.site.register(User, UserAdminConfig)
 
 from .models import Otp
 admin.site.register(Otp)
+admin.site.register(models.EmergencyInformation)
+admin.site.register(models.ContactInformation)

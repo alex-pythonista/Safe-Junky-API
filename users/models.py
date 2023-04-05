@@ -77,3 +77,30 @@ class Otp(BaseModel):
 
     def __str__(self):
         return f"{self.user.full_name} - {self.otp}"
+    
+class EmergencyInformation(BaseModel):
+    
+    BLOOD_GROUP = (
+        ('A+', 'A+'),
+        ('A-', 'A-'),
+        ('B+', 'B+'),
+        ('B-', 'B-'),
+        ('AB+', 'AB+'),
+        ('AB-', 'AB-'),
+        ('O+', 'O+'),
+        ('O-', 'O-'),
+    )
+
+    user = models.ForeignKey(User, related_name="user_emergency", on_delete=models.CASCADE)
+    blood_group = models.CharField(max_length=3, choices=BLOOD_GROUP)
+
+    def __str__(self):
+        return f"{self.user.full_name} - {self.blood_group}"
+
+class ContactInformation(BaseModel):
+    user = models.ForeignKey(User, related_name="user_contact", on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    phone_number = models.CharField(max_length=13)
+
+    def __str__(self):
+        return f"{self.user.full_name} - {self.name} - {self.phone_number}"

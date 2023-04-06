@@ -11,7 +11,7 @@ class Vehicle(models.Model):
     vehicle_brand = models.ForeignKey('VehicleBrand', on_delete=models.CASCADE, related_name='vehicle_brands')
 
     def __str__(self):
-        return f"{self.user.full_name} - {self.vehicle_type} - {self.registration_number}"
+        return f"{self.user.full_name} - {self.registration_number}"
     
     
 class VehicleBrand(models.Model):

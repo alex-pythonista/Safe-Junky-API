@@ -24,11 +24,11 @@ class VehicleBrand(models.Model):
         ('Truck', 'Truck'),
     )
 
-    brand_name = models.CharField(max_length=30, unique=True)
+    brand_name = models.CharField(max_length=30)
     vehicle_type = models.CharField(max_length=20, choices=VEHICLE_TYPE)
 
     def __str__(self):
-        return f"{self.brand_name}"
+        return f"{self.brand_name} - {self.vehicle_type}"
 
 
 class VehicleModel(models.Model):

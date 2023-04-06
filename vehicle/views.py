@@ -1,8 +1,8 @@
-from rest_framework import status, views
+from rest_framework import status, views, generics
 from rest_framework.response import Response
-from . import serializers, models
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
+from . import serializers, models
 
 # Create your views here.
 
@@ -30,3 +30,8 @@ class VehicleView(views.APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         
+
+class AllBrandView(generics.GenericAPIView):
+    serializer_class = serializers.BrandSerializer
+    permission_classes = [AllowAny]
+    

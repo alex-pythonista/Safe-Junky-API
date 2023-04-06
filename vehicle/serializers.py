@@ -54,3 +54,10 @@ class VehicleSerializer(serializers.ModelSerializer):
         return vehicle
   
         
+class BrandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.VehicleBrand
+        fields = [
+            'brand_name',
+            'vehicle_type',
+        ]

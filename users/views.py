@@ -104,3 +104,20 @@ class VerifyOtpView(generics.GenericAPIView):
                 'error': str(e),
                 'message' : 'Something went wrong'
             }, status=status.HTTP_400_BAD_REQUEST)
+        
+
+class UserProfileView(generics.GenericAPIView):
+    serializer_class = serializers.UserProfileSerializer
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            user = models.User.objects.get(id=request.user.id)
+            serializer = self.serializer_class(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({
+                'error': str(e)
+            }, status=status.HTTP_400_BAD_REQUEST)
+        

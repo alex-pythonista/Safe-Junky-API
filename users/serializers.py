@@ -27,3 +27,9 @@ class UserLoginSerializer(serializers.Serializer):
 
 class VerifyOtpSerializer(serializers.Serializer):
     otp = serializers.IntegerField()
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.User
+        fields = ('email', 'phone_number', 'full_name')

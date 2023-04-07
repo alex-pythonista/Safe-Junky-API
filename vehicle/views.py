@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view
+from rest_framework.filters import SearchFilter
 from . import serializers, models
 
 
@@ -41,3 +42,17 @@ def get_all_brands(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+class GetModelsByBrands(views.APIView):
+    serializer_class =  serializers.ModelSerializerBasedOnBrands
+    search_fields = ['brand__brand_name', 'brand__vehicle_type']
+
+    def get(self, request):
+        try:
+            brand_name = request.GET.get('brand_name')
+            vehicle_type = request.GET.get('vehicle_type')
+            queryset = models.VehicleModel.objects.filter(brand__brand_name=brand_name, brand__vehicle_type=vehicle_type)
+            serializer = self.serializer_class(queryset, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

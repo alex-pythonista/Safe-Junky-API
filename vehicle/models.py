@@ -37,3 +37,4 @@ class VehicleModel(models.Model):
 
     def __str__(self):
         return f"{self.brand.brand_name} - {self.model_name}"
+        

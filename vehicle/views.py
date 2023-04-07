@@ -32,7 +32,35 @@ class VehicleView(views.APIView):
             return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        
+
+
+class AddVehicleView(views.APIView):
+    serializer_class = serializers.AddVehicleSerializer
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            user = request.user
+            registration_number = serializer.validated_data.get('registration_number')
+            vehicle_image = serializer.validated_data.get('vehicle_image')
+            vehicle_brand = serializer.validated_data.get('vehicle_brand')
+            vehicle_model = serializer.validated_data.get('vehicle_model')
+            vehicle_type = serializer.validated_data.get('vehicle_type')
+
+            
+            vehicle_model_obj = models.VehicleModel.objects.filter(model_name=vehicle_model).first()
+            vehicle_brand_obj = models.VehicleBrand.objects.filter(brand_name=vehicle_brand, vehicle_type=vehicle_type).first()
+            # check registration number already exists or not
+            if models.Vehicle.objects.filter(registration_number=registration_number).exists():
+                return Response({'error': 'Registration number already exists'}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                vehicle_obj = models.Vehicle.objects.create(user=user, registration_number=registration_number, vehicle_image=vehicle_image, vehicle_brand=vehicle_model_obj.brand)
+                vehicle_obj.save()
+                return Response({'success': 'Vehicle added successfully'}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 
 @api_view(['GET'])
 def get_all_brands(request):
@@ -42,6 +70,7 @@ def get_all_brands(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class GetModelsByBrands(views.APIView):
     serializer_class =  serializers.ModelSerializerBasedOnBrands

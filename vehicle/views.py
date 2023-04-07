@@ -56,7 +56,6 @@ class AddVehicleView(views.APIView):
 
             
             vehicle_model_obj = models.VehicleModel.objects.filter(model_name=vehicle_model).first()
-            vehicle_brand_obj = models.VehicleBrand.objects.filter(brand_name=vehicle_brand, vehicle_type=vehicle_type).first()
             # check registration number already exists or not
             if models.Vehicle.objects.filter(registration_number=registration_number).exists():
                 return Response({'error': 'Registration number already exists'}, status=status.HTTP_400_BAD_REQUEST)

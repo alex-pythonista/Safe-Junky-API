@@ -14,10 +14,15 @@ class VehicleView(views.APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication]
 
-    def get(self, request):
+    def get(self, request, pk=None):
         try:
-            vehicle_obj = models.Vehicle.objects.filter(user=request.user)
-            serializer = self.serializer_class(vehicle_obj, many=True)
+            if pk is not None:
+                vehicle_obj = models.Vehicle.objects.filter(pk=pk, user=request.user).first()
+                if vehicle_obj is None:
+                    return Response({'error': 'Vehicle not found'}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                vehicle_obj = models.Vehicle.objects.filter(user=request.user)
+            serializer = self.serializer_class(vehicle_obj, many=not pk)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

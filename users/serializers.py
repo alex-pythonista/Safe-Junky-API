@@ -43,12 +43,6 @@ class EmergencyInfoSerializer(serializers.ModelSerializer):
             'blood_group',
         ]
 
-    def create(self, validated_data):
-        emergency_info = models.EmergencyInformation.objects.create(
-            user=self.context['request'].user,
-            blood_group=validated_data['blood_group'],
-        )
-        return emergency_info
     
 class ContactInformationSerializer(serializers.ModelSerializer):
     class Meta:

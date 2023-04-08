@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
-
+from rest_framework import views
 
 from . import serializers, models
 from utils.azure_email_service import send_email
@@ -140,4 +140,3 @@ class EmergencyInfoView(generics.GenericAPIView):
                 'error': str(e)
             }, status=status.HTTP_400_BAD_REQUEST)
         
-

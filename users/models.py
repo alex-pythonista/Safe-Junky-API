@@ -98,7 +98,7 @@ class EmergencyInformation(BaseModel):
         return f"{self.user.full_name} - {self.blood_group}"
 
 class ContactInformation(BaseModel):
-    emergency_info = models.ForeignKey(EmergencyInformation, related_name="emergency_contact", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name="user_contact", on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=13)
 

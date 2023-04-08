@@ -35,7 +35,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = ('email', 'phone_number', 'full_name')
 
 
-
 class EmergencyInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.EmergencyInformation
@@ -44,12 +43,18 @@ class EmergencyInfoSerializer(serializers.ModelSerializer):
         ]
 
     
-class ContactInformationSerializer(serializers.ModelSerializer):
+class ContactsSerializers(serializers.ModelSerializer):
     class Meta:
         model = models.ContactInformation
         fields = [
             'id',
-            'user',
             'name',
             'phone_number',
         ]
+    
+    def update(self, instance, validated_data):
+        instance.id = validated_data.get('id', instance.id)
+        instance.name = validated_data.get('name', instance.name)
+        instance.phone_number = validated_data.get('phone_number', instance.phone_number)
+        instance.save()
+        return instance

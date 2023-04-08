@@ -63,11 +63,10 @@ def get_contacts(request):
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 @authentication_classes([TokenAuthentication])
-def update_contact(request):
+def update_contact(request, id=None):
     try:
         data = request.data
-        contact_id = data.get('contact_id')
-        contact = models.ContactInformation.objects.get(user=request.user, id=contact_id)
+        contact = models.ContactInformation.objects.get(user=request.user, pk=id)
         contact.name = data.get('name')
         contact.phone_number = data.get('phone_number')
         contact.save()

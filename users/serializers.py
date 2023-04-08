@@ -52,9 +52,3 @@ class ContactsSerializers(serializers.ModelSerializer):
             'phone_number',
         ]
     
-    def update(self, instance, validated_data):
-        instance.id = validated_data.get('id', instance.id)
-        instance.name = validated_data.get('name', instance.name)
-        instance.phone_number = validated_data.get('phone_number', instance.phone_number)
-        instance.save()
-        return instance

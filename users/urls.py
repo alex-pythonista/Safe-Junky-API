@@ -14,6 +14,6 @@ urlpatterns = [
     path('update-blood-group/', emergency.update_blood_group, name='update-blood-group'),
     
     path('view-contacts/', emergency.get_contacts, name='add-contact'),
-    path('update-contact/', emergency.update_contact, name='update-contact'),
-    
+    path('update-contact/<int:id>', emergency.update_contact, name='update-contact'),
+
     ]

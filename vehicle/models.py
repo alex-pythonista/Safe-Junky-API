@@ -9,6 +9,7 @@ class Vehicle(models.Model):
     registration_number = models.CharField(max_length=30, unique=True)
     vehicle_image = models.ImageField(upload_to='vehicle_images', blank=True, null=True)
     vehicle_brand = models.ForeignKey('VehicleBrand', on_delete=models.CASCADE, related_name='vehicle_brands')
+    vehicle_model = models.ForeignKey('VehicleModel', on_delete=models.CASCADE, related_name='vehicle_models', null=False, blank=False)
 
     def __str__(self):
         return f"{self.user.full_name} - {self.registration_number}"

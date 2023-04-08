@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate
+
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
@@ -121,3 +122,34 @@ class UserProfileView(generics.GenericAPIView):
                 'error': str(e)
             }, status=status.HTTP_400_BAD_REQUEST)
         
+
+class EmergencyInfoView(generics.GenericAPIView):
+    serializer_class = serializers.EmergencyInfoSerializer
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+
+    def post(self, request):
+        try:
+            serializer = self.serializer_class(data=request.data)
+            if serializer.is_valid():
+                serializer.save(user=request.user)
+                return Response({
+                    'message': 'Emergency info added successfully'
+                }, serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({
+                'error': str(e)
+            }, status=status.HTTP_400_BAD_REQUEST)                
+        
+
+    def get(self, request):
+        try:
+            emergency_info = models.EmergencyInformation.objects.get(user=request.user)
+            serializer = self.serializer_class(emergency_info)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({
+                'error': str(e)
+            }, status=status.HTTP_400_BAD_REQUEST)

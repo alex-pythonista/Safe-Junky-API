@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view
 from rest_framework.filters import SearchFilter
+from django.shortcuts import get_object_or_404
 from . import serializers, models
 
 
@@ -55,12 +56,21 @@ class AddVehicleView(views.APIView):
             vehicle_type = serializer.validated_data.get('vehicle_type')
 
             
-            vehicle_model_obj = models.VehicleModel.objects.filter(model_name=vehicle_model).first()
+            vehicle_brand = get_object_or_404(models.VehicleBrand, brand_name=vehicle_brand, vehicle_type=vehicle_type)
+            vehicle_model = get_object_or_404(models.VehicleModel, brand=vehicle_brand.id, model_name=vehicle_model)
+
             # check registration number already exists or not
             if models.Vehicle.objects.filter(registration_number=registration_number).exists():
                 return Response({'error': 'Registration number already exists'}, status=status.HTTP_400_BAD_REQUEST)
             else:
-                vehicle_obj = models.Vehicle.objects.create(user=user, registration_number=registration_number, vehicle_image=vehicle_image, vehicle_brand=vehicle_model_obj.brand)
+                vehicle_obj = models.Vehicle.objects.create(
+                user=user,
+                registration_number=registration_number,
+                vehicle_image=vehicle_image,
+                vehicle_brand=vehicle_brand,
+                vehicle_model=vehicle_model
+                )
+                vehicle_obj.vehicle_brand.vehicle_model.add(vehicle_model)
                 vehicle_obj.save()
                 return Response({'success': 'Vehicle added successfully'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -89,3 +99,5 @@ class GetModelsByBrands(views.APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+

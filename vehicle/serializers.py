@@ -51,3 +51,16 @@ class AddVehicleSerializer(serializers.Serializer):
     vehicle_brand = serializers.CharField(required=True)
     vehicle_model = serializers.CharField(required=True)
     vehicle_type = serializers.CharField(required=True)
+
+class DrivingLicenseSerializer(serializers.ModelSerializer):
+    vehicle_id = serializers.IntegerField(required=True)
+
+    class Meta:
+        model = models.DrivingLicense
+        fields = ['id', 'vehicle_id', 'license_file']
+
+    def create(self, validated_data):
+        vehicle_id = validated_data.pop('vehicle_id')
+        vehicle = models.Vehicle.objects.get(pk=vehicle_id)
+        return models.DrivingLicense.objects.create(vehicle=vehicle, **validated_data)
+

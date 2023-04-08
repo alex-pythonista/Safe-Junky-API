@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.html import format_html
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+
 
 User = get_user_model()
 
@@ -54,14 +57,23 @@ class VehicleModel(models.Model):
         
 
 class DrivingLicense(models.Model):
-    Vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name='vehicle_driving_license')
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name='vehicle_driving_license')
     license_file = models.FileField(upload_to='driving_license')
 
     def __str__(self):
-        return f"{self.Vehicle.user.full_name} - {self.Vehicle.registration_number}"
+        return f"{self.vehicle.user.full_name} - {self.vehicle.registration_number}"
     
     def save(self, *args, **kwargs):
         if self.pk:
-            old_obj = DrivingLicense.objects.get(pk=self.pk)
-            old_obj.license_file.delete()
+            old_instance = DrivingLicense.objects.get(pk=self.pk)
+            if old_instance.license_file and self.license_file != old_instance.license_file:
+                old_instance.license_file.delete(save=False)
         super(DrivingLicense, self).save(*args, **kwargs)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['vehicle'], name='unique_driving_license_per_vehicle')
+        ]
+
+
+       

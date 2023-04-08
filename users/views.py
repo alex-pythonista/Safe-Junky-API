@@ -53,7 +53,8 @@ class UserLoginView(generics.GenericAPIView):
                 if user:
                     token, _ = Token.objects.get_or_create(user=user)
                     return Response({
-                        'token': token.key
+                        'token': token.key,
+                        'full_name' : user.full_name,
                     }, status=status.HTTP_200_OK)
                 return Response({
                     'error': 'Invalid credentials'

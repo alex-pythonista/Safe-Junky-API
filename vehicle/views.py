@@ -70,7 +70,6 @@ class AddVehicleView(views.APIView):
                 vehicle_brand=vehicle_brand,
                 vehicle_model=vehicle_model
                 )
-                vehicle_obj.vehicle_brand.vehicle_model.add(vehicle_model)
                 vehicle_obj.save()
                 return Response({'success': 'Vehicle added successfully'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -101,3 +100,32 @@ class GetModelsByBrands(views.APIView):
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
+class VehicleDrivingLicense(views.APIView):
+    serializer_class = serializers.DrivingLicenseSerializer
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+
+    def get(self, request):
+        try:
+            driving_license_obj = models.DrivingLicense.objects.filter(vehicle__user=request.user).first()
+            serializer = self.serializer_class(driving_license_obj)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+    def post(self, request):
+        try:
+            serializer = self.serializer_class(data=request.data)
+            if serializer.is_valid():
+                # check any license already exists or not
+                if models.DrivingLicense.objects.filter(vehicle__user=request.user).exists():
+                    models.DrivingLicense.objects.filter(vehicle__user=request.user).delete()
+                serializer.save()
+                return Response({'success': 'Driving license added successfully'}, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+        

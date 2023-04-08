@@ -118,9 +118,8 @@ class VehicleDrivingLicense(views.APIView):
         try:
             serializer = self.serializer_class(data=request.data)
             if serializer.is_valid():
-                # check any license already exists or not
                 if models.DrivingLicense.objects.filter(vehicle__user=request.user).exists():
-                    models.DrivingLicense.objects.filter(vehicle__user=request.user).delete()
+                    return Response({'error': 'Driving license already exists'}, status=status.HTTP_400_BAD_REQUEST)
                 serializer.save()
                 return Response({'success': 'Driving license added successfully'}, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -128,4 +127,10 @@ class VehicleDrivingLicense(views.APIView):
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     
     
-        
+    def delete(self, request):
+        try:
+            driving_license_obj = models.DrivingLicense.objects.filter(vehicle__user=request.user).first()
+            driving_license_obj.delete()
+            return Response({'success': 'Driving license deleted successfully'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

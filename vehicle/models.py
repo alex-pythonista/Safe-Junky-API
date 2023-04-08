@@ -63,17 +63,17 @@ class DrivingLicense(models.Model):
     def __str__(self):
         return f"{self.vehicle.user.full_name} - {self.vehicle.registration_number}"
     
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['vehicle'], name='unique_driving_license_per_vehicle')
+        ]
+
     def save(self, *args, **kwargs):
         if self.pk:
             old_instance = DrivingLicense.objects.get(pk=self.pk)
             if old_instance.license_file and self.license_file != old_instance.license_file:
                 old_instance.license_file.delete(save=False)
         super(DrivingLicense, self).save(*args, **kwargs)
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['vehicle'], name='unique_driving_license_per_vehicle')
-        ]
 
 
        

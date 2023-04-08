@@ -46,6 +46,7 @@ def update_blood_group(request):
         }, status=status.HTTP_400_BAD_REQUEST)
     
 
+# Contacts 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @authentication_classes([TokenAuthentication])
@@ -59,6 +60,22 @@ def get_contacts(request):
             'error': str(e)
         }, status=status.HTTP_400_BAD_REQUEST)
     
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+def create_contact(request):
+    try:
+        serializer = serializers.ContactsSerializers(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({
+            'error': str(e)
+        }, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])

@@ -52,3 +52,10 @@ class ContactsSerializers(serializers.ModelSerializer):
             'phone_number',
         ]
     
+    def create(self, validated_data):
+        contact = models.ContactInformation.objects.create(
+            user=validated_data['user'],
+            name=validated_data['name'],
+            phone_number=validated_data['phone_number'],
+        )
+        return contact

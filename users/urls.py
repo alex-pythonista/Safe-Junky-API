@@ -1,4 +1,4 @@
-from . import emergency, views
+from . import emergency_view, views
 from django.urls import path
 
 urlpatterns = [
@@ -10,10 +10,11 @@ urlpatterns = [
 
     # Emergency Information
     path('emergency-info/', views.EmergencyInfoView.as_view(), name='emergency-info'),
-    path('add-blood-group/', emergency.create_blood_group, name='add-blood-group'),
-    path('update-blood-group/', emergency.update_blood_group, name='update-blood-group'),
+    path('add-blood-group/', emergency_view.create_blood_group, name='add-blood-group'),
+    path('update-blood-group/', emergency_view.update_blood_group, name='update-blood-group'),
     
-    path('view-contacts/', emergency.get_contacts, name='add-contact'),
-    path('update-contact/<int:id>', emergency.update_contact, name='update-contact'),
-
+    # Contact Information
+    path('view-contacts/', emergency_view.get_contacts, name='add-contact'),
+    path('create-contact/', emergency_view.create_contact, name='create-contact'),
+    path('update-contact/<int:id>', emergency_view.update_contact, name='update-contact'),
     ]

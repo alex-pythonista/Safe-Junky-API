@@ -4,7 +4,11 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view
 from rest_framework.filters import SearchFilter
+
 from django.shortcuts import get_object_or_404
+from django.conf import settings
+
+import os
 from . import serializers, models
 
 
@@ -126,11 +130,15 @@ class VehicleDrivingLicense(views.APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     
-    
     def delete(self, request):
         try:
             driving_license_obj = models.DrivingLicense.objects.filter(vehicle__user=request.user).first()
-            driving_license_obj.delete()
-            return Response({'success': 'Driving license deleted successfully'}, status=status.HTTP_200_OK)
+            if driving_license_obj:
+                file_path = os.path.join(settings.MEDIA_ROOT, str(driving_license_obj.license_file))
+                os.remove(file_path)
+                driving_license_obj.delete()
+                return Response({'success': 'Driving license deleted successfully'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'error': 'No driving license found for this user'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

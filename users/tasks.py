@@ -1,8 +1,10 @@
 from azure.communication.email import EmailClient
 from django.conf import settings
 
+from celery import shared_task
 
-def send_email(to, otp):
+@shared_task
+def send_email_task(to, otp):
     email_client = EmailClient.from_connection_string(settings.AZURE_COMMUNICATIONS_CONNECTION_STRING)
     message = {
         "content": {
@@ -15,6 +17,13 @@ def send_email(to, otp):
                                 <p>Thanks for registering with us. Please verify your email address by entering the following OTP:)</p>
                                 <p><b>{otp}</b></p>
                                 <p>Thanks</p>
+                            </body>
+                            <style>
+                                body {{
+                                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                                }}
+                            </style>
+                        </html>
                         """
 
         },

@@ -155,3 +155,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Azure Credentials
 AZURE_COMMUNICATIONS_CONNECTION_STRING = os.getenv('AZURE_STRING_FOR_EMAIL')
+
+
+# Celery settings
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_RESULT_BACKEND = "redis://localhost:6379"

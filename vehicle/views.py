@@ -26,7 +26,7 @@ class VehicleView(views.APIView):
                 if vehicle_obj is None:
                     return Response({'error': 'Vehicle not found'}, status=status.HTTP_400_BAD_REQUEST)
             else:
-                vehicle_obj = models.Vehicle.objects.filter(user=request.user)
+                vehicle_obj = models.Vehicle.objects.filter(user=request.user).order_by('-created_at')
             serializer = self.serializer_class(vehicle_obj, many=not pk)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:

@@ -8,8 +8,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework import views
 
 from . import serializers, models
-from utils.azure_email_service import send_email
-
+from users.tasks import send_email_task
 import random
 
 # Create your views here.
@@ -24,7 +23,7 @@ class UserRegisterView(generics.GenericAPIView):
             if serializer.is_valid():
                 user = serializer.save()
                 generated_otp = random.randint(1000, 9999)
-                send_email(to=user.email, otp=generated_otp)
+                send_email_task.delay(user.email, generated_otp)
                 models.Otp.objects.create(user=user, otp=generated_otp)
                 if user is not None:
                     token, _ = Token.objects.get_or_create(user=user)

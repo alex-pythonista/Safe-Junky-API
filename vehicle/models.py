@@ -1,14 +1,12 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.html import format_html
-from django.core.files.storage import default_storage
-from django.core.files.base import ContentFile
-
+from users.models import BaseModel
 
 User = get_user_model()
 
 # Create your models here.
-class Vehicle(models.Model):
+class Vehicle(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     registration_number = models.CharField(max_length=30, unique=True)
     vehicle_image = models.ImageField(upload_to='vehicle_images', blank=True, null=True)
@@ -56,7 +54,7 @@ class VehicleModel(models.Model):
         return f"{self.brand.brand_name} - {self.model_name}"
         
 
-class DrivingLicense(models.Model):
+class DrivingLicense(BaseModel):
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name='vehicle_driving_license')
     license_file = models.FileField(upload_to='driving_license')
 

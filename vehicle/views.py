@@ -111,7 +111,9 @@ class VehicleDrivingLicense(views.APIView):
 
     def get(self, request):
         try:
-            driving_license_obj = models.DrivingLicense.objects.filter(vehicle__user=request.user).first()
+            driving_license_obj = models.DrivingLicense.objects.filter(user=request.user).first()
+            if driving_license_obj is None:
+                return Response({'error': 'Driving license not found'}, status=status.HTTP_400_BAD_REQUEST)
             serializer = self.serializer_class(driving_license_obj)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
@@ -122,9 +124,14 @@ class VehicleDrivingLicense(views.APIView):
         try:
             serializer = self.serializer_class(data=request.data)
             if serializer.is_valid():
-                if models.DrivingLicense.objects.filter(vehicle__user=request.user).exists():
+                if models.DrivingLicense.objects.filter(user=request.user).exists():
                     return Response({'error': 'Driving license already exists'}, status=status.HTTP_400_BAD_REQUEST)
-                serializer.save()
+                license_file = serializer.validated_data.get('license_file')
+                driving_license_obj = models.DrivingLicense.objects.create(
+                    user=request.user,
+                    license_file=license_file
+                )
+                driving_license_obj.save()
                 return Response({'success': 'Driving license added successfully'}, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
@@ -132,7 +139,7 @@ class VehicleDrivingLicense(views.APIView):
     
     def delete(self, request):
         try:
-            driving_license_obj = models.DrivingLicense.objects.filter(vehicle__user=request.user).first()
+            driving_license_obj = models.DrivingLicense.objects.filter(user=request.user).first()
             if driving_license_obj:
                 file_path = os.path.join(settings.MEDIA_ROOT, str(driving_license_obj.license_file))
                 os.remove(file_path)

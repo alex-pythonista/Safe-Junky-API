@@ -55,16 +55,11 @@ class VehicleModel(models.Model):
         
 
 class DrivingLicense(BaseModel):
-    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name='vehicle_driving_license')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='driving_license')
     license_file = models.FileField(upload_to='driving_license')
 
     def __str__(self):
-        return f"{self.vehicle.user.full_name} - {self.vehicle.registration_number}"
-    
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['vehicle'], name='unique_driving_license_per_vehicle')
-        ]
+        return f"{self.user.full_name}'s Driving License"
 
     def save(self, *args, **kwargs):
         if self.pk:

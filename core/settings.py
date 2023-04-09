@@ -142,7 +142,7 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
     # '/var/www/static/',
 ]
-STATIC_ROOT = '/var/www/api_server/assets/'
+STATIC_ROOT = 'staticfiles'
 
 # media
 MEDIA_URL = '/media/'

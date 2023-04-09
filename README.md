@@ -21,3 +21,34 @@
     ```bash
     python3 manage.py runserver
     ```
+
+# On the Azure server
+1. Fist of all, you need to install the requirements and migrate
+    ```bash
+    pip install -r requirements.txt
+    python3 manage.py migrate
+    ```
+2. Restart the gunicorn server
+    ```bash
+    sudo systemctl restart gunicorn
+    sudo systemctl daemon-reload
+    ```
+3. Restart the nginx server
+    ```bash
+    sudo systemctl restart nginx
+    ```
+4. Restart the celery server
+    ```bash
+    sudo supervisorctl reread
+    sudo supervisorctl update
+    sudo supervisorctl start celery-worker
+    ```
+    - for stoping the celery server
+        ```bash
+        sudo supervisorctl stop celery-worker
+        ```
+5. See the celery logs
+    ```bash
+    sudo tail -n 50 /var/log/celery/worker.log
+    ```
+

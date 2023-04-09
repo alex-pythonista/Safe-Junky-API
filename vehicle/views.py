@@ -142,3 +142,21 @@ class VehicleDrivingLicense(views.APIView):
                 return Response({'error': 'No driving license found for this user'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+class RegistrationSearchView(views.APIView):
+    serializer_class = serializers.VehicleSerializer
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+
+    def get(self, request):
+        try:
+            registration_number = request.query_params.get('registration_number')           
+            vehicle_obj = models.Vehicle.objects.filter(registration_number__iexact=registration_number).first()
+            if vehicle_obj:
+                serializer = self.serializer_class(vehicle_obj)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response({'error': 'No vehicle found with this registration number'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

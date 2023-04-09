@@ -154,8 +154,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Azure Credentials
-AZURE_COMMUNICATIONS_CONNECTION_STRING = "endpoint=https://test-django-email.communication.azure.com/;accesskey=mGI96OwdSOUmUOB4ODpHb0F8E+ZjecWTUJTXge3zMfjV5ghULUWbe2N52ScIA5s6NC3n04DIe8q1MG8uHK/APQ=="
-
+AZURE_COMMUNICATIONS_CONNECTION_STRING = os.getenv('AZURE_STRING_FOR_EMAIL')
 
 # Celery settings
 CELERY_BROKER_URL = "redis://localhost:6379"

@@ -1,9 +1,9 @@
 from azure.communication.email import EmailClient
 from django.conf import settings
-
+from core.celery import app
 from celery import shared_task
 
-@shared_task
+@app.task
 def send_email_task(to, otp):
     email_client = EmailClient.from_connection_string(settings.AZURE_COMMUNICATIONS_CONNECTION_STRING)
     message = {

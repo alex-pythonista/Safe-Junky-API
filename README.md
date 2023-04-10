@@ -52,3 +52,10 @@
     sudo tail -n 50 /var/log/celery/worker.log
     ```
 
+### For debugging 
+1. See the nginx logs
+    ```bash
+    sudo tail -f /var/log/nginx/access.log > /home/adib-safe-junkey/logs.txt
+    
+    sudo tail -f /var/log/nginx/access.log | tee /home/adib-safe-junkey/logs.txt
+    ```

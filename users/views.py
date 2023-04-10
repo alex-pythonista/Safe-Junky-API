@@ -6,6 +6,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework import views
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 
 from . import serializers, models
 from users.tasks import send_email_task
@@ -140,3 +141,18 @@ class EmergencyInfoView(generics.GenericAPIView):
                 'error': str(e)
             }, status=status.HTTP_400_BAD_REQUEST)
         
+
+@api_view(['DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def delete_account(request):
+    try:
+        user = models.User.objects.get(id=request.user.id)
+        user.delete()
+        return Response({
+            'message': 'Account deleted successfully'
+        }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({
+            'error': str(e)
+        }, status=status.HTTP_400_BAD_REQUEST)

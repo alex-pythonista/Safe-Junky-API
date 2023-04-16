@@ -43,6 +43,16 @@ class VehicleView(views.APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+    def delete(self, request, pk=None):
+        try:
+            vehicle_obj = models.Vehicle.objects.filter(pk=pk, user=request.user).exists()
+            if vehicle_obj is False:
+                return Response({'error': 'Vehicle not found'}, status=status.HTTP_400_BAD_REQUEST)
+            models.Vehicle.objects.filter(pk=pk, user=request.user).delete()
+            return Response({'message': 'Vehicle deleted successfully'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            
 
 class AddVehicleView(views.APIView):
     serializer_class = serializers.AddVehicleSerializer

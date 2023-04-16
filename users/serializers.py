@@ -28,6 +28,16 @@ class UserLoginSerializer(serializers.Serializer):
 class VerifyOtpSerializer(serializers.Serializer):
     otp = serializers.IntegerField()
 
+class RequestOtpForPasswordResetSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+class ResetPasswordOtpVerifySerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    otp = serializers.IntegerField()
+
+class ChangePasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField()
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:

@@ -8,6 +8,11 @@ urlpatterns = [
     path('verify-otp/', views.VerifyOtpView.as_view(), name='verify'),
     path('profile/', views.UserProfileView.as_view(), name='profile'),
     path('delete-account/', views.delete_account, name='delete-profile'),
+    
+    # Forget Password
+    path('request-for-otp/', views.RequestOtpForPasswordResetView.as_view(), name='forget-password'),
+    path('reset-password-otp-verify/', views.ResetPasswordOTPVerifyView.as_view(), name='reset-password'),
+    path('change-password/', views.ResetPasswordView.as_view(), name='change-password'),
 
     # Emergency Information
     path('emergency-info/', views.EmergencyInfoView.as_view(), name='emergency-info'),

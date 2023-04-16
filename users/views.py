@@ -5,7 +5,6 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
-from rest_framework import views
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 
 from . import serializers, models
@@ -106,6 +105,94 @@ class VerifyOtpView(generics.GenericAPIView):
             return Response({
                 'error': str(e),
                 'message' : 'Something went wrong'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RequestOtpForPasswordResetView(generics.GenericAPIView): 
+    permission_classes = [AllowAny]
+    serializer_class = serializers.RequestOtpForPasswordResetSerializer
+
+    def post(self, request):
+        try:
+            serializer = self.serializer_class(data=request.data)
+            if serializer.is_valid():
+                email = serializer.validated_data.get('email')
+                user = models.User.objects.get(email=email)
+                if user is not None:
+                    user.verified = False
+                    user.save()
+
+                    generated_otp = random.randint(1000, 9999)
+                    send_email_task.delay(email, generated_otp)
+                    models.Otp.objects.create(user=user, otp=generated_otp, has_used=False)
+                    return Response({
+                        'message': 'OTP sent successfully! Please check your email'
+                    }, status=status.HTTP_200_OK)
+                else:
+                    return Response({
+                        'error': 'User not found'
+                    }, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({
+                'error': str(e)
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+class ResetPasswordOTPVerifyView(generics.GenericAPIView):
+    serializer_class = serializers.ResetPasswordOtpVerifySerializer
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        try:
+            serializer = self.serializer_class(data=request.data)
+            if serializer.is_valid():
+                email = serializer.validated_data.get('email')
+                otp = serializer.validated_data.get('otp')
+                user_obj = models.User.objects.get(email=email)
+                otp_obj = models.Otp.objects.get(user=user_obj, otp=otp)
+                if otp_obj is not None:
+                    otp_obj.has_used = True
+                    otp_obj.save()
+                    return Response({
+                        'message': 'OTP verified successfully! Please set your new password'
+                    }, status=status.HTTP_200_OK)   
+                return Response({
+                    'error': 'Invalid OTP'
+                }, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({
+                'error': str(e)
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+
+class ResetPasswordView(generics.GenericAPIView):
+    serializer_class = serializers.ChangePasswordSerializer
+    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication]
+
+    def post(self, request):
+        try:
+            serializer = self.serializer_class(data=request.data)
+            if serializer.is_valid():
+                email = serializer.validated_data.get('email')
+                password = serializer.validated_data.get('password')
+                user_obj = models.User.objects.get(email=email)
+                verification_status = user_obj.verified
+                if verification_status is False:
+                    user_obj.set_password(password)
+                    user_obj.verified = True
+                    user_obj.save()
+                    return Response({
+                        'message': 'Password changed successfully'
+                    }, status=status.HTTP_200_OK)
+                return Response({
+                    'error': 'Request for new OTP and try again!'
+                }, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({
+                'error': str(e)
             }, status=status.HTTP_400_BAD_REQUEST)
         
 
